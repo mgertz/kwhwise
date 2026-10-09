@@ -1,6 +1,6 @@
-# MGPriceCalc
+# kwhwise
 
-MGPriceCalc skal hente den aktuelle danske elspotpris og beregne et kvalificeret
+kwhwise skal hente den aktuelle danske elspotpris og beregne et kvalificeret
 estimat for den samlede pris pr. kWh. Resultatet publiceres via MQTT, saa det
 kan bruges direkte i Home Assistant.
 
@@ -126,7 +126,7 @@ environment:
   MQTT_USERNAME: ${MQTT_USERNAME}
   MQTT_PASSWORD: ${MQTT_PASSWORD}
   MQTT_DISCOVERY_PREFIX: homeassistant
-  MQTT_BASE_TOPIC: mgpriscalc
+  MQTT_BASE_TOPIC: kwhwise
   TZ: Europe/Copenhagen
 ```
 
@@ -244,24 +244,24 @@ fakturaberegner.
 
 ## MQTT og Home Assistant
 
-MQTT Discovery skal oprette generiske entiteter med prefixet `mgpriscalc`.
+MQTT Discovery skal oprette generiske entiteter med prefixet `kwhwise`.
 
 Foerste version skal som minimum publicere:
 
 ```text
-sensor.mgpriscalc_current_price
-sensor.mgpriscalc_spot_price
-sensor.mgpriscalc_spot_price_markup
-sensor.mgpriscalc_grid_tariff
-sensor.mgpriscalc_transmission_tariff
-sensor.mgpriscalc_system_tariff
-sensor.mgpriscalc_electricity_tax
+sensor.kwhwise_current_price
+sensor.kwhwise_spot_price
+sensor.kwhwise_spot_price_markup
+sensor.kwhwise_grid_tariff
+sensor.kwhwise_transmission_tariff
+sensor.kwhwise_system_tariff
+sensor.kwhwise_electricity_tax
 ```
 
 Den vigtigste entitet er:
 
 ```text
-sensor.mgpriscalc_current_price
+sensor.kwhwise_current_price
 ```
 
 Den skal have:
