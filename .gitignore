@@ -1,0 +1,8 @@
+# Local API responses may contain customer and metering-point identifiers.
+15min.txt
+60min.txt
+
+# Local environment files may contain MQTT credentials.
+.env
+.env.*
+!.env.example
