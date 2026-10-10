@@ -6,3 +6,10 @@
 .env
 .env.*
 !.env.example
+
+# Local build output.
+/kwhwise
+
+# CI-only Node release tooling.
+/node_modules/
+npm-debug.log*
