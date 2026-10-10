@@ -1,0 +1,10 @@
+schema_version: 1
+id: nrgi
+name: NRGi Time
+regions: [DK1, DK2]
+unit: ore_per_kwh
+default_markup_vat: included
+source: https://nrgi.dk/privat/stroem/
+verified_at: "2026-10-10"
+# The customer supplies the markup. Intro offers and personal contracts differ.
+# Fixed monthly subscriptions are not part of the variable kWh price.
