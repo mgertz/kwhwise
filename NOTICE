@@ -1,0 +1,17 @@
+kwhwise is licensed under the MIT License. See LICENSE.
+Copyright (c) 2026 Michael Ringhus Gertz.
+
+The compiled application includes third-party Go components:
+
+- Go standard library: BSD-3-Clause (The Go Authors).
+- github.com/eclipse/paho.mqtt.golang: EPL-2.0 / EDL-1.0.
+  Upstream: https://github.com/eclipse-paho/paho.mqtt.golang
+- go.yaml.in/yaml/v3: MIT and Apache-2.0.
+  Upstream: https://github.com/yaml/go-yaml
+- github.com/gorilla/websocket: BSD-2-Clause.
+  Upstream: https://github.com/gorilla/websocket
+- golang.org/x/net and golang.org/x/sync: BSD-3-Clause.
+  Upstream: https://go.googlesource.com/net and https://go.googlesource.com/sync
+
+The container includes their original license files under /licenses.
+Dependency versions are recorded in go.mod and go.sum.

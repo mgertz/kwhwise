@@ -1,0 +1,17 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+15min.txt
+60min.txt
+opencode.json
+opencode.jsonc
+kwhwise
+README.md
+docs
+**/*_test.go
+node_modules
+package*.json
+.releaserc.json
+scripts
