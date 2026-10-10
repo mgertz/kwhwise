@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Do not interrupt the tag -> image handoff, or allow latest to race between runs.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-test:
+    name: Go Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Verify Go code
+        uses: ./.github/actions/go-checks
+      - name: Set up Node.js for release-tool tests
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install release-tool dependencies
+        run: npm ci --ignore-scripts
+      - name: Test release handoff
+        run: npm run test:release
+
+  release:
+    name: Semantic Release
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      new_release_git_tag: ${{ steps.semantic.outputs.new_release_git_tag }}
+    steps:
+      - name: Checkout full history and tags
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install release-tool dependencies
+        run: npm ci --ignore-scripts
+      - name: Publish semantic release
+        id: semantic
+        run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker:
+    name: Build and Push Docker Image
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout the released source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.release.outputs.new_release_git_tag }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract version tags and labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.release.outputs.new_release_git_tag }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.release.outputs.new_release_git_tag }}
+            type=semver,pattern={{major}},value=${{ needs.release.outputs.new_release_git_tag }}
+            type=raw,value=latest
+      - name: Build and push the release image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: APP_VERSION=${{ needs.release.outputs.new_release_version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

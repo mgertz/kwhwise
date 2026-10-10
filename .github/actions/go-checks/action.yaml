@@ -1,0 +1,29 @@
+name: Go checks
+description: Check formatting, test, vet and build kwhwise
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version-file: go.mod
+    - name: Check formatting
+      shell: bash
+      run: |
+        unformatted="$(gofmt -l cmd internal profiles integration)"
+        if [[ -n "$unformatted" ]]; then
+          printf 'Run gofmt on these files:\n%s\n' "$unformatted"
+          exit 1
+        fi
+    - name: Test with race detector
+      shell: bash
+      run: go test -race ./...
+    - name: Vet
+      shell: bash
+      run: go vet ./...
+    - name: Build Linux binaries
+      shell: bash
+      run: |
+        for architecture in amd64 arm64; do
+          CGO_ENABLED=0 GOOS=linux GOARCH="$architecture" go build -trimpath -o "$RUNNER_TEMP/kwhwise-$architecture" ./cmd/kwhwise
+        done
