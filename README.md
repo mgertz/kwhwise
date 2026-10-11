@@ -458,9 +458,9 @@ none
 Den samlede pris skal vaere:
 
 ```text
-sum af komponenter med moms inkluderet
-+ sum af momspligtige komponenter eksklusive moms * 1,25
-+ sum af momsfrie komponenter
+sum af komponenter med momsstatus `included` (moms er allerede medregnet)
++ sum af komponenter med momsstatus `excluded` (momspligtige, eksklusive moms) * 1,25
++ sum af komponenter med momsstatus `none` (momsfrie, lagt til uden moms)
 ```
 
 Det endelige momsformat skal verificeres mod officielle tarifdokumenter og
@@ -553,13 +553,19 @@ Koerselsforloebet er:
 6. Sov indtil denne tid
 7. Gentag fra trin 2
 
-Den normale cyklus koerer derfor ved `xx:00:00` lokal tid. Timeren skal
-beregne naeste hele time ud fra det aktuelle klokkeslaet i stedet for at bruge
-en fast 60-minutters ticker. Det undgaar drift og haandterer sommertid og
-vintertid korrekt.
+Den normale cyklus koerer derfor ved `xx:00:00` tarif-lokal tid (dansk lokal
+tid for danske profiler, uafhaengigt af `TZ`). Timeren skal beregne naeste
+hele time ud fra det aktuelle klokkeslaet i tarifprofilens tidszone i stedet
+for at bruge en fast 60-minutters ticker. Det undgaar drift og haandterer
+sommertid og vintertid korrekt.
 
-`TZ` bestemmer processens/loggenes tidszone. Selve prisopdateringen foelger
-danske timegraenser, saa en anden visningstidszone ikke forsinker prisskift.
+`TZ` bestemmer kun processens/loggenes visningstidszone. Selve
+prisopdateringen og timeplanlaegningen foelger altid tarifprofilens tidszone
+(`Europe/Copenhagen` for de nuvaerende danske profiler) og dermed de faktiske
+spot- og tarif-timegraenser, saa en anden `TZ`-visningstidszone hverken
+forsinker eller fremrykker prisskift. Dette er saerligt vigtigt for
+tidszoner med offset, der ikke er et helt antal timer fra UTC, hvor en
+timebaseret planlaegning i `TZ` ellers kunne ramme forkerte klokkeslaet.
 
 Naeste tidspunkt findes langs den faktiske tidslinje, saa den gentagne time
 ved overgang til vintertid ikke springes over. Opdateringer koerer sekventielt;
