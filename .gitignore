@@ -1,0 +1,15 @@
+# Local API responses may contain customer and metering-point identifiers.
+15min.txt
+60min.txt
+
+# Local environment files may contain MQTT credentials.
+.env
+.env.*
+!.env.example
+
+# Local build output.
+/kwhwise
+
+# CI-only Node release tooling.
+/node_modules/
+npm-debug.log*

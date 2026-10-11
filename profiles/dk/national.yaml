@@ -1,0 +1,32 @@
+schema_version: 1
+country: DK
+timezone: Europe/Copenhagen
+unit: ore_per_kwh
+vat_rate: 0.25
+# Ordinary household import charges. No subscription or tax reimbursement.
+# GLN: 5790000432752; DataHub prices in DKK/kWh before VAT, scaled by 100.
+charges:
+  - id: transmission_tariff
+    vat: excluded
+    periods:
+      - valid_from: "2026-01-01"
+        valid_until: "2027-01-01"
+        value: 4.3
+        source: 'https://api.energidataservice.dk/dataset/DatahubPricelist?start=2026-01-01&end=2026-10-11&filter={"ChargeTypeCode":["40000","41000","EA-001"]}&limit=10'
+        verified_at: "2026-10-10"
+  - id: system_tariff
+    vat: excluded
+    periods:
+      - valid_from: "2026-01-01"
+        valid_until: "2027-01-01"
+        value: 7.2
+        source: 'https://api.energidataservice.dk/dataset/DatahubPricelist?start=2026-01-01&end=2026-10-11&filter={"ChargeTypeCode":["40000","41000","EA-001"]}&limit=10'
+        verified_at: "2026-10-10"
+  - id: electricity_tax
+    vat: excluded
+    periods:
+      - valid_from: "2026-01-01"
+        valid_until: "2028-01-01"
+        value: 0.8
+        source: 'https://api.energidataservice.dk/dataset/DatahubPricelist?start=2026-01-01&end=2026-10-11&filter={"ChargeTypeCode":["40000","41000","EA-001"]}&limit=10'
+        verified_at: "2026-10-10"

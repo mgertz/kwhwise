@@ -1,0 +1,32 @@
+schema_version: 1
+operator: cerius
+customer_group: C
+regions: [DK2]
+timezone: Europe/Copenhagen
+unit: ore_per_kwh
+vat: excluded
+# DataHub prices are DKK/kWh before VAT; values below are multiplied by 100.
+# Cross-checked against the NRGi account grid totals, including national charges.
+# GLN: 5790000705184; charge code: 30TR_C_ET (ordinary C customers).
+periods:
+  - valid_from: "2026-04-01"
+    valid_until: "2027-04-01"
+    source: 'https://api.energidataservice.dk/dataset/DatahubPricelist?start=2026-01-01&end=2027-04-02&filter={"GLN_Number":["5790000705184"],"ChargeTypeCode":["30TR_C_ET"]}&sort=ValidFrom&limit=10'
+    verified_at: "2026-10-10"
+    seasons:
+      summer:
+        from: "04-01"
+        until: "10-01"
+        rates:
+          - {from: "00:00", to: "06:00", value: 11.5336}
+          - {from: "06:00", to: "17:00", value: 17.3004}
+          - {from: "17:00", to: "21:00", value: 44.9811}
+          - {from: "21:00", to: "24:00", value: 17.3004}
+      winter:
+        from: "10-01"
+        until: "04-01"
+        rates:
+          - {from: "00:00", to: "06:00", value: 11.5336}
+          - {from: "06:00", to: "17:00", value: 34.6008}
+          - {from: "17:00", to: "21:00", value: 103.8025}
+          - {from: "21:00", to: "24:00", value: 34.6008}
